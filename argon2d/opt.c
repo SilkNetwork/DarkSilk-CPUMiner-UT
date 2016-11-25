@@ -25,8 +25,8 @@
 #include "argon2.h"
 #include "opt.h"
 
-#include "../blake2/blake2.h"
-#include "../blake2/blamka-round-opt.h"
+#include "blake2.h"
+#include "blamka-round-opt.h"
 
 void fill_block(__m128i *state, const uint8_t *ref_block, uint8_t *next_block) {
     __m128i block_XY[ARGON2_OWORDS_IN_BLOCK];

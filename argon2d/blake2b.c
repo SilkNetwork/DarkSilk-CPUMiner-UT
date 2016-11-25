@@ -78,7 +78,7 @@ int blake2b_init_param(blake2b_state *S, const blake2b_param *P) {
 }
 
 /* Sequential blake2b initialization */
-int blake2b_init(blake2b_state *S, size_t outlen) {
+int blake2b_argon_init(blake2b_state *S, size_t outlen) {
     blake2b_param P;
 
     if (S == NULL) {
@@ -210,7 +210,7 @@ static void blake2b_compress(blake2b_state *S, const uint8_t *block) {
 #undef ROUND
 }
 
-int blake2b_update(blake2b_state *S, const void *in, size_t inlen) {
+int blake2b_argon_update(blake2b_state *S, const void *in, size_t inlen) {
     const uint8_t *pin = (const uint8_t *)in;
 
     if (inlen == 0) {
@@ -250,7 +250,7 @@ int blake2b_update(blake2b_state *S, const void *in, size_t inlen) {
     return 0;
 }
 
-int blake2b_final(blake2b_state *S, void *out, size_t outlen) {
+int blake2b_argon_final(blake2b_state *S, void *out, size_t outlen) {
     uint8_t buffer[BLAKE2B_OUTBYTES] = {0};
     unsigned int i;
 
@@ -303,15 +303,15 @@ int blake2b(void *out, size_t outlen, const void *in, size_t inlen,
             goto fail;
         }
     } else {
-        if (blake2b_init(&S, outlen) < 0) {
+        if (blake2b_argon_init(&S, outlen) < 0) {
             goto fail;
         }
     }
 
-    if (blake2b_update(&S, in, inlen) < 0) {
+    if (blake2b_argon_update(&S, in, inlen) < 0) {
         goto fail;
     }
-    ret = blake2b_final(&S, out, outlen);
+    ret = blake2b_argon_final(&S, out, outlen);
 
 fail:
     burn(&S, sizeof(S));
@@ -341,18 +341,18 @@ int blake2b_long(void *pout, size_t outlen, const void *in, size_t inlen) {
     } while ((void)0, 0)
 
     if (outlen <= BLAKE2B_OUTBYTES) {
-        TRY(blake2b_init(&blake_state, outlen));
-        TRY(blake2b_update(&blake_state, outlen_bytes, sizeof(outlen_bytes)));
-        TRY(blake2b_update(&blake_state, in, inlen));
-        TRY(blake2b_final(&blake_state, out, outlen));
+        TRY(blake2b_argon_init(&blake_state, outlen));
+        TRY(blake2b_argon_update(&blake_state, outlen_bytes, sizeof(outlen_bytes)));
+        TRY(blake2b_argon_update(&blake_state, in, inlen));
+        TRY(blake2b_argon_final(&blake_state, out, outlen));
     } else {
         uint32_t toproduce;
         uint8_t out_buffer[BLAKE2B_OUTBYTES];
         uint8_t in_buffer[BLAKE2B_OUTBYTES];
-        TRY(blake2b_init(&blake_state, BLAKE2B_OUTBYTES));
-        TRY(blake2b_update(&blake_state, outlen_bytes, sizeof(outlen_bytes)));
-        TRY(blake2b_update(&blake_state, in, inlen));
-        TRY(blake2b_final(&blake_state, out_buffer, BLAKE2B_OUTBYTES));
+        TRY(blake2b_argon_init(&blake_state, BLAKE2B_OUTBYTES));
+        TRY(blake2b_argon_update(&blake_state, outlen_bytes, sizeof(outlen_bytes)));
+        TRY(blake2b_argon_update(&blake_state, in, inlen));
+        TRY(blake2b_argon_final(&blake_state, out_buffer, BLAKE2B_OUTBYTES));
         memcpy(out, out_buffer, BLAKE2B_OUTBYTES / 2);
         out += BLAKE2B_OUTBYTES / 2;
         toproduce = (uint32_t)outlen - BLAKE2B_OUTBYTES / 2;
