@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "miner.h"
 #include "argon2.h"
 #include "encoding.h"
 #include "core.h"
@@ -264,7 +265,7 @@ int argon2i_hash_raw(const uint32_t t_cost, const uint32_t m_cost,
                        hash, hashlen, NULL, 0, Argon2_i);
 }
 
-int argon2d_hash_encoded(const uint32_t t_cost, const uint32_t m_cost,
+int argon2d_hardhash_encoded(const uint32_t t_cost, const uint32_t m_cost,
                          const uint32_t parallelism, const void *pwd,
                          const size_t pwdlen, const void *salt,
                          const size_t saltlen, const size_t hashlen,
@@ -274,7 +275,7 @@ int argon2d_hash_encoded(const uint32_t t_cost, const uint32_t m_cost,
                        NULL, hashlen, encoded, encodedlen, Argon2_d);
 }
 
-int argon2d_hash_raw(const uint32_t t_cost, const uint32_t m_cost,
+int argon2d_hardhash_raw(const uint32_t t_cost, const uint32_t m_cost,
                      const uint32_t parallelism, const void *pwd,
                      const size_t pwdlen, const void *salt,
                      const size_t saltlen, void *hash, const size_t hashlen) {
@@ -405,4 +406,124 @@ const char *error_message(int error_code) {
         return Argon2_ErrorMessage[(argon2_error_codes)error_code];
     }
     return "Unknown error code.";
+}
+
+void argon2d_easy_hash(void *state, const void *input)
+{
+
+    argon2_context context;
+    context.out = (uint8_t *)state;
+    context.outlen = 32;
+    context.pwd = (uint8_t *)input;
+    context.pwdlen = 80;
+    context.salt = (uint8_t *)input; //salt = input
+    context.saltlen = 80;
+    context.secret = NULL;
+    context.secretlen = 0;
+    context.ad = NULL;
+    context.adlen = 0;
+    context.allocate_cbk = NULL;
+    context.free_cbk = NULL;
+    context.flags = 2; // = ARGON2_DEFAULT_FLAGS
+    // main configurable Argon2 hash parameters
+    context.m_cost = 1024; // Memory in KB
+    context.lanes = 2;    // Degree of Parallelism
+    context.threads = 2;  // Threads
+    context.t_cost = 1;   // Iterations
+    argon2_core(&context, Argon2_d);
+}
+
+void argon2d_hard_hash(void *state, const void *input)
+{
+
+    argon2_context context;
+    context.out = (uint8_t *)state;
+    context.outlen = 32;
+    context.pwd = (uint8_t *)input;
+    context.pwdlen = 80;
+    context.salt = (uint8_t *)input; //salt = input
+    context.saltlen = 80;
+    context.secret = NULL;
+    context.secretlen = 0;
+    context.ad = NULL;
+    context.adlen = 0;
+    context.allocate_cbk = NULL;
+    context.free_cbk = NULL;
+    context.flags = 2; // = ARGON2_DEFAULT_FLAGS
+    // main configurable Argon2 hash parameters
+    context.m_cost = 1024; // Memory in KB
+    context.lanes = 64;    // Degree of Parallelism
+    context.threads = 4;  // Threads
+    context.t_cost = 8;    // Iterations
+    argon2_core(&context, Argon2_d);
+}
+
+int scanhash_argon2d_easy(int thr_id, struct work *work, uint32_t max_nonce, uint64_t *hashes_done)
+{
+    uint32_t _ALIGN(128) hash32[8];
+    uint32_t _ALIGN(128) endiandata[20];
+    uint32_t *pdata = work->data;
+    uint32_t *ptarget = work->target;
+
+    const uint32_t Htarg = ptarget[7];
+    const uint32_t first_nonce = pdata[19];
+
+    uint32_t n = first_nonce;
+
+    for (int i=0; i < 19; i++) {
+        be32enc(&endiandata[i], pdata[i]);
+    }
+
+    do {
+        be32enc(&endiandata[19], n);
+        argon2d_easy_hash(hash32, endiandata);
+        if (hash32[7] < Htarg && fulltest(hash32, ptarget)) {
+            work_set_target_ratio(work, hash32);
+            *hashes_done = n - first_nonce + 1;
+            pdata[19] = n;
+            return true;
+        }
+        n++;
+
+    } while (n < max_nonce && !work_restart[thr_id].restart);
+
+    *hashes_done = n - first_nonce + 1;
+    pdata[19] = n;
+
+    return 0;
+}
+
+int scanhash_argon2d_hard(int thr_id, struct work *work, uint32_t max_nonce, uint64_t *hashes_done)
+{
+    uint32_t _ALIGN(128) hash32[8];
+    uint32_t _ALIGN(128) endiandata[20];
+    uint32_t *pdata = work->data;
+    uint32_t *ptarget = work->target;
+
+    const uint32_t Htarg = ptarget[7];
+    const uint32_t first_nonce = pdata[19];
+
+    uint32_t n = first_nonce;
+
+    for (int i=0; i < 19; i++) {
+        be32enc(&endiandata[i], pdata[i]);
+    }
+
+    do {
+        be32enc(&endiandata[19], n);
+        argon2d_hard_hash(hash32, endiandata);
+        if (hash32[7] < Htarg && fulltest(hash32, ptarget)) {
+            work_set_target_ratio(work, hash32);
+            *hashes_done = n - first_nonce + 1;
+            pdata[19] = n;
+            return true;
+        }
+        n++;
+
+    } while (n < max_nonce && !work_restart[thr_id].restart);
+
+    *hashes_done = n - first_nonce + 1;
+    pdata[19] = n;
+
+    return 0;
 }

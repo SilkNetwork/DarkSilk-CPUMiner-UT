@@ -103,11 +103,15 @@ struct workio_cmd {
 enum algos {
 	ALGO_SCRYPT,		/* scrypt(1024,1,1) */
 	ALGO_SHA256D,		/* SHA-256d */
+	ALGO_ARGON2D_E,   /* Argon2d Easy */
+	ALGO_ARGON2D_H,   /* Argon2d Hard */
 };
 
 static const char *algo_names[] = {
 	[ALGO_SCRYPT]		= "scrypt",
 	[ALGO_SHA256D]		= "sha256d",
+	[ALGO_ARGON2D_E]	= "argon2d_easy",
+	[ALGO_ARGON2D_H]	= "argon2d_hard",
 };
 
 bool opt_debug = false;
@@ -173,6 +177,8 @@ Options:\n\
                           scrypt    scrypt(1024, 1, 1) (default)\n\
                           scrypt:N  scrypt(N, 1, 1)\n\
                           sha256d   SHA-256d\n\
+  						  argon2d_easy    Argon2d with easy parameters\n\
+  						  argon2d_hard    Argon2d with hard parameters\n\
   -o, --url=URL         URL of mining server\n\
   -O, --userpass=U:P    username:password pair for mining server\n\
   -u, --user=USERNAME   username for mining server\n\
@@ -1166,6 +1172,12 @@ static void *miner_thread(void *userdata)
 
 		/* scan nonces for a proof-of-work hash */
 		switch (opt_algo) {
+		case ALGO_ARGON2D_E:
+			rc = scanhash_argon2d_easy(thr_id, &work, max_nonce, &hashes_done);
+			break;
+		case ALGO_ARGON2D_H:
+			rc = scanhash_argon2d_hard(thr_id, &work, max_nonce, &hashes_done);
+			break;
 		case ALGO_SCRYPT:
 			rc = scanhash_scrypt(thr_id, work.data, scratchbuf, work.target,
 			                     max_nonce, &hashes_done, opt_scrypt_n);

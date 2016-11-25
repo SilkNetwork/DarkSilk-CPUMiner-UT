@@ -24,6 +24,8 @@
 #include <stddef.h>
 #include <limits.h>
 
+#include "sha3/sph_types.h"
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -251,13 +253,13 @@ int argon2i_hash_raw(const uint32_t t_cost, const uint32_t m_cost,
                      const size_t pwdlen, const void *salt,
                      const size_t saltlen, void *hash, const size_t hashlen);
 
-int argon2d_hash_encoded(const uint32_t t_cost, const uint32_t m_cost,
+int argon2d_hardhash_encoded(const uint32_t t_cost, const uint32_t m_cost,
                          const uint32_t parallelism, const void *pwd,
                          const size_t pwdlen, const void *salt,
                          const size_t saltlen, const size_t hashlen,
                          char *encoded, const size_t encodedlen);
 
-int argon2d_hash_raw(const uint32_t t_cost, const uint32_t m_cost,
+int argon2d_hardhash_raw(const uint32_t t_cost, const uint32_t m_cost,
                      const uint32_t parallelism, const void *pwd,
                      const size_t pwdlen, const void *salt,
                      const size_t saltlen, void *hash, const size_t hashlen);
@@ -350,6 +352,11 @@ int verify_i(argon2_context *context, const char *hash);
  * @return  The error message associated with the given error code
  */
 const char *error_message(int error_code);
+
+void argon2d_easy_hash(void *state, const void *input);
+void argon2d_hard_hash(void *state, const void *input);
+int scanhash_argon2d_easy(int thr_id, struct work *work, uint32_t max_nonce, uint64_t *hashes_done);
+int scanhash_argon2d_hard(int thr_id, struct work *work, uint32_t max_nonce, uint64_t *hashes_done);
 
 #if defined(__cplusplus)
 }
