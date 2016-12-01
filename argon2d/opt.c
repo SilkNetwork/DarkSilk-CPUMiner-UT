@@ -34,7 +34,7 @@ void fill_block(__m128i *state, const uint8_t *ref_block, uint8_t *next_block) {
 
     for (i = 0; i < ARGON2_OWORDS_IN_BLOCK; i++) {
         block_XY[i] = state[i] = _mm_xor_si128(
-            state[i], _mm_loadu_si128((__m128i const *)(&ref_block[16 * i])));
+                                     state[i], _mm_loadu_si128((__m128i const *)(&ref_block[16 * i])));
     }
 
     for (i = 0; i < 8; ++i) {
@@ -139,7 +139,7 @@ void fill_segment(const argon2_instance_t *instance,
     memcpy(state, ((instance->memory + prev_offset)->v), ARGON2_BLOCK_SIZE);
 
     for (i = starting_index; i < instance->segment_length;
-         ++i, ++curr_offset, ++prev_offset) {
+            ++i, ++curr_offset, ++prev_offset) {
         /*1.1 Rotating prev_offset if needed */
         if (curr_offset % instance->lane_length == 1) {
             prev_offset = curr_offset - 1;

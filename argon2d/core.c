@@ -58,7 +58,9 @@
 #endif
 
 /***************Instance and Position constructors**********/
-void init_block_value(block *b, uint8_t in) { memset(b->v, in, sizeof(b->v)); }
+void init_block_value(block *b, uint8_t in) {
+    memset(b->v, in, sizeof(b->v));
+}
 
 void copy_block(block *dst, const block *src) {
     memcpy(dst->v, src->v, sizeof(uint64_t) * ARGON2_QWORDS_IN_BLOCK);
@@ -90,7 +92,7 @@ int allocate_memory(block **memory, uint32_t m_cost) {
     if (memory != NULL) {
         size_t memory_size = sizeof(block) * m_cost;
         if (m_cost != 0 &&
-            memory_size / m_cost !=
+                memory_size / m_cost !=
                 sizeof(block)) { /*1. Check for multiplication overflow*/
             return ARGON2_MEMORY_ALLOCATION_ERROR;
         }
@@ -129,7 +131,9 @@ void clear_memory(argon2_instance_t *instance, int clear) {
     }
 }
 
-void free_memory(block *memory) { free(memory); }
+void free_memory(block *memory) {
+    free(memory);
+}
 
 void finalize(const argon2_context *context, argon2_instance_t *instance) {
     if (context != NULL && instance != NULL) {
@@ -234,8 +238,8 @@ uint32_t index_alpha(const argon2_instance_t *instance,
 
     if (0 != position->pass) {
         start_position = (position->slice == ARGON2_SYNC_POINTS - 1)
-                             ? 0
-                             : (position->slice + 1) * instance->segment_length;
+                         ? 0
+                         : (position->slice + 1) * instance->segment_length;
     }
 
     /* 1.2.6. Computing absolute position */
@@ -315,7 +319,7 @@ int fill_memory_blocks(argon2_instance_t *instance) {
 
             /* 3. Joining remaining threads */
             for (l = instance->lanes - instance->threads; l < instance->lanes;
-                 ++l) {
+                    ++l) {
                 rc = argon2_thread_join(thread[l]);
                 if (rc) {
                     return ARGON2_THREAD_FAIL;
@@ -523,7 +527,7 @@ void initial_hash(uint8_t *blockhash, argon2_context *context,
 
     if (context->pwd != NULL) {
         blake2b_argon_update(&BlakeHash, (const uint8_t *)context->pwd,
-                       context->pwdlen);
+                             context->pwdlen);
 
         if (context->flags & ARGON2_FLAG_CLEAR_PASSWORD) {
             secure_wipe_memory(context->pwd, context->pwdlen);
@@ -536,7 +540,7 @@ void initial_hash(uint8_t *blockhash, argon2_context *context,
 
     if (context->salt != NULL) {
         blake2b_argon_update(&BlakeHash, (const uint8_t *)context->salt,
-                       context->saltlen);
+                             context->saltlen);
     }
 
     store32(&value, context->secretlen);
@@ -544,7 +548,7 @@ void initial_hash(uint8_t *blockhash, argon2_context *context,
 
     if (context->secret != NULL) {
         blake2b_argon_update(&BlakeHash, (const uint8_t *)context->secret,
-                       context->secretlen);
+                             context->secretlen);
 
         if (context->flags & ARGON2_FLAG_CLEAR_SECRET) {
             secure_wipe_memory(context->secret, context->secretlen);
@@ -557,7 +561,7 @@ void initial_hash(uint8_t *blockhash, argon2_context *context,
 
     if (context->ad != NULL) {
         blake2b_argon_update(&BlakeHash, (const uint8_t *)context->ad,
-                       context->adlen);
+                             context->adlen);
     }
 
     blake2b_argon_final(&BlakeHash, blockhash, ARGON2_PREHASH_DIGEST_LENGTH);
@@ -575,7 +579,7 @@ int initialize(argon2_instance_t *instance, argon2_context *context) {
     if (NULL != context->allocate_cbk) {
         uint8_t *p;
         result = context->allocate_cbk(&p, instance->memory_blocks *
-                                               ARGON2_BLOCK_SIZE);
+                                       ARGON2_BLOCK_SIZE);
         if (ARGON2_OK != result) {
             return result;
         }
@@ -595,7 +599,7 @@ int initialize(argon2_instance_t *instance, argon2_context *context) {
     /* Zeroing 8 extra bytes */
     secure_wipe_memory(blockhash + ARGON2_PREHASH_DIGEST_LENGTH,
                        ARGON2_PREHASH_SEED_LENGTH -
-                           ARGON2_PREHASH_DIGEST_LENGTH);
+                       ARGON2_PREHASH_DIGEST_LENGTH);
 
 #ifdef GENKAT
     initial_kat(blockhash, context, instance->type);

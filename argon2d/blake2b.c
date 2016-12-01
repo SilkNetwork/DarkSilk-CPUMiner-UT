@@ -16,7 +16,8 @@ static const uint64_t blake2b_IV[8] = {
     UINT64_C(0x6a09e667f3bcc908), UINT64_C(0xbb67ae8584caa73b),
     UINT64_C(0x3c6ef372fe94f82b), UINT64_C(0xa54ff53a5f1d36f1),
     UINT64_C(0x510e527fade682d1), UINT64_C(0x9b05688c2b3e6c1f),
-    UINT64_C(0x1f83d9abfb41bd6b), UINT64_C(0x5be0cd19137e2179)};
+    UINT64_C(0x1f83d9abfb41bd6b), UINT64_C(0x5be0cd19137e2179)
+};
 
 static const unsigned int blake2b_sigma[12][16] = {
     {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15},
@@ -45,7 +46,7 @@ static BLAKE2_INLINE void blake2b_set_lastblock(blake2b_state *S) {
 }
 
 static BLAKE2_INLINE void blake2b_increment_counter(blake2b_state *S,
-                                                    uint64_t inc) {
+        uint64_t inc) {
     S->t[0] += inc;
     S->t[1] += (S->t[0] < inc);
 }

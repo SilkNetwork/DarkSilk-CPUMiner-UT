@@ -254,15 +254,15 @@ int argon2i_hash_raw(const uint32_t t_cost, const uint32_t m_cost,
                      const size_t saltlen, void *hash, const size_t hashlen);
 
 int argon2d_hardhash_encoded(const uint32_t t_cost, const uint32_t m_cost,
-                         const uint32_t parallelism, const void *pwd,
-                         const size_t pwdlen, const void *salt,
-                         const size_t saltlen, const size_t hashlen,
-                         char *encoded, const size_t encodedlen);
+                             const uint32_t parallelism, const void *pwd,
+                             const size_t pwdlen, const void *salt,
+                             const size_t saltlen, const size_t hashlen,
+                             char *encoded, const size_t encodedlen);
 
 int argon2d_hardhash_raw(const uint32_t t_cost, const uint32_t m_cost,
-                     const uint32_t parallelism, const void *pwd,
-                     const size_t pwdlen, const void *salt,
-                     const size_t saltlen, void *hash, const size_t hashlen);
+                         const uint32_t parallelism, const void *pwd,
+                         const size_t pwdlen, const void *salt,
+                         const size_t saltlen, void *hash, const size_t hashlen);
 
 /* generic function underlying the above ones */
 int argon2_hash(const uint32_t t_cost, const uint32_t m_cost,

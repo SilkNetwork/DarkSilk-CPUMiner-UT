@@ -35,82 +35,82 @@ static const char *Argon2_ErrorMessage[] = {
     {ARGON2_OUTPUT_PTR_NULL, */ "Output pointer is NULL",
     /*},
 
-{ARGON2_OUTPUT_TOO_SHORT, */ "Output is too short",
+    {ARGON2_OUTPUT_TOO_SHORT, */ "Output is too short",
     /*},
-{ARGON2_OUTPUT_TOO_LONG, */ "Output is too long",
-    /*},
-
-{ARGON2_PWD_TOO_SHORT, */ "Password is too short",
-    /*},
-{ARGON2_PWD_TOO_LONG, */ "Password is too long",
+    {ARGON2_OUTPUT_TOO_LONG, */ "Output is too long",
     /*},
 
-{ARGON2_SALT_TOO_SHORT, */ "Salt is too short",
+    {ARGON2_PWD_TOO_SHORT, */ "Password is too short",
     /*},
-{ARGON2_SALT_TOO_LONG, */ "Salt is too long",
-    /*},
-
-{ARGON2_AD_TOO_SHORT, */ "Associated data is too short",
-    /*},
-{ARGON2_AD_TOO_LONG, */ "Associated date is too long",
+    {ARGON2_PWD_TOO_LONG, */ "Password is too long",
     /*},
 
-{ARGON2_SECRET_TOO_SHORT, */ "Secret is too short",
+    {ARGON2_SALT_TOO_SHORT, */ "Salt is too short",
     /*},
-{ARGON2_SECRET_TOO_LONG, */ "Secret is too long",
-    /*},
-
-{ARGON2_TIME_TOO_SMALL, */ "Time cost is too small",
-    /*},
-{ARGON2_TIME_TOO_LARGE, */ "Time cost is too large",
+    {ARGON2_SALT_TOO_LONG, */ "Salt is too long",
     /*},
 
-{ARGON2_MEMORY_TOO_LITTLE, */ "Memory cost is too small",
+    {ARGON2_AD_TOO_SHORT, */ "Associated data is too short",
     /*},
-{ARGON2_MEMORY_TOO_MUCH, */ "Memory cost is too large",
-    /*},
-
-{ARGON2_LANES_TOO_FEW, */ "Too few lanes",
-    /*},
-{ARGON2_LANES_TOO_MANY, */ "Too many lanes",
+    {ARGON2_AD_TOO_LONG, */ "Associated date is too long",
     /*},
 
-{ARGON2_PWD_PTR_MISMATCH, */ "Password pointer is NULL, but password length is not 0",
+    {ARGON2_SECRET_TOO_SHORT, */ "Secret is too short",
     /*},
-{ARGON2_SALT_PTR_MISMATCH, */ "Salt pointer is NULL, but salt length is not 0",
-    /*},
-{ARGON2_SECRET_PTR_MISMATCH, */ "Secret pointer is NULL, but secret length is not 0",
-    /*},
-{ARGON2_AD_PTR_MISMATCH, */ "Associated data pointer is NULL, but ad length is not 0",
+    {ARGON2_SECRET_TOO_LONG, */ "Secret is too long",
     /*},
 
-{ARGON2_MEMORY_ALLOCATION_ERROR, */ "Memory allocation error",
+    {ARGON2_TIME_TOO_SMALL, */ "Time cost is too small",
+    /*},
+    {ARGON2_TIME_TOO_LARGE, */ "Time cost is too large",
     /*},
 
-{ARGON2_FREE_MEMORY_CBK_NULL, */ "The free memory callback is NULL",
+    {ARGON2_MEMORY_TOO_LITTLE, */ "Memory cost is too small",
     /*},
-{ARGON2_ALLOCATE_MEMORY_CBK_NULL, */ "The allocate memory callback is NULL",
-    /*},
-
-{ARGON2_INCORRECT_PARAMETER, */ "Argon2_Context context is NULL",
-    /*},
-{ARGON2_INCORRECT_TYPE, */ "There is no such version of Argon2",
+    {ARGON2_MEMORY_TOO_MUCH, */ "Memory cost is too large",
     /*},
 
-{ARGON2_OUT_PTR_MISMATCH, */ "Output pointer mismatch",
+    {ARGON2_LANES_TOO_FEW, */ "Too few lanes",
+    /*},
+    {ARGON2_LANES_TOO_MANY, */ "Too many lanes",
     /*},
 
-{ARGON2_THREADS_TOO_FEW, */ "Not enough threads",
+    {ARGON2_PWD_PTR_MISMATCH, */ "Password pointer is NULL, but password length is not 0",
     /*},
-{ARGON2_THREADS_TOO_MANY, */ "Too many threads",
+    {ARGON2_SALT_PTR_MISMATCH, */ "Salt pointer is NULL, but salt length is not 0",
     /*},
-{ARGON2_MISSING_ARGS, */ "Missing arguments",
+    {ARGON2_SECRET_PTR_MISMATCH, */ "Secret pointer is NULL, but secret length is not 0",
     /*},
-{ARGON2_ENCODING_FAIL, */ "Encoding failed",
+    {ARGON2_AD_PTR_MISMATCH, */ "Associated data pointer is NULL, but ad length is not 0",
     /*},
-{ARGON2_DECODING_FAIL, */ "Decoding failed",
+
+    {ARGON2_MEMORY_ALLOCATION_ERROR, */ "Memory allocation error",
     /*},
-{ARGON2_THREAD_FAIL */ "Threading failure", /*},*/
+
+    {ARGON2_FREE_MEMORY_CBK_NULL, */ "The free memory callback is NULL",
+    /*},
+    {ARGON2_ALLOCATE_MEMORY_CBK_NULL, */ "The allocate memory callback is NULL",
+    /*},
+
+    {ARGON2_INCORRECT_PARAMETER, */ "Argon2_Context context is NULL",
+    /*},
+    {ARGON2_INCORRECT_TYPE, */ "There is no such version of Argon2",
+    /*},
+
+    {ARGON2_OUT_PTR_MISMATCH, */ "Output pointer mismatch",
+    /*},
+
+    {ARGON2_THREADS_TOO_FEW, */ "Not enough threads",
+    /*},
+    {ARGON2_THREADS_TOO_MANY, */ "Too many threads",
+    /*},
+    {ARGON2_MISSING_ARGS, */ "Missing arguments",
+    /*},
+    {ARGON2_ENCODING_FAIL, */ "Encoding failed",
+    /*},
+    {ARGON2_DECODING_FAIL, */ "Decoding failed",
+    /*},
+    {ARGON2_THREAD_FAIL */ "Threading failure", /*},*/
 };
 
 
@@ -266,19 +266,19 @@ int argon2i_hash_raw(const uint32_t t_cost, const uint32_t m_cost,
 }
 
 int argon2d_hardhash_encoded(const uint32_t t_cost, const uint32_t m_cost,
-                         const uint32_t parallelism, const void *pwd,
-                         const size_t pwdlen, const void *salt,
-                         const size_t saltlen, const size_t hashlen,
-                         char *encoded, const size_t encodedlen) {
+                             const uint32_t parallelism, const void *pwd,
+                             const size_t pwdlen, const void *salt,
+                             const size_t saltlen, const size_t hashlen,
+                             char *encoded, const size_t encodedlen) {
 
     return argon2_hash(t_cost, m_cost, parallelism, pwd, pwdlen, salt, saltlen,
                        NULL, hashlen, encoded, encodedlen, Argon2_d);
 }
 
 int argon2d_hardhash_raw(const uint32_t t_cost, const uint32_t m_cost,
-                     const uint32_t parallelism, const void *pwd,
-                     const size_t pwdlen, const void *salt,
-                     const size_t saltlen, void *hash, const size_t hashlen) {
+                         const uint32_t parallelism, const void *pwd,
+                         const size_t pwdlen, const void *salt,
+                         const size_t saltlen, void *hash, const size_t hashlen) {
 
     return argon2_hash(t_cost, m_cost, parallelism, pwd, pwdlen, salt, saltlen,
                        hash, hashlen, NULL, 0, Argon2_d);
@@ -332,7 +332,7 @@ int argon2_verify(const char *encoded, const void *pwd, const size_t pwdlen,
     }
 
     ret = argon2_hash(ctx.t_cost, ctx.m_cost, ctx.threads, pwd, pwdlen, ctx.salt,
-                ctx.saltlen, out, ctx.outlen, NULL, 0, type);
+                      ctx.saltlen, out, ctx.outlen, NULL, 0, type);
 
     free(ctx.ad);
     free(ctx.salt);
@@ -358,9 +358,13 @@ int argon2d_verify(const char *encoded, const void *pwd, const size_t pwdlen) {
     return argon2_verify(encoded, pwd, pwdlen, Argon2_d);
 }
 
-int argon2d(argon2_context *context) { return argon2_core(context, Argon2_d); }
+int argon2d(argon2_context *context) {
+    return argon2_core(context, Argon2_d);
+}
 
-int argon2i(argon2_context *context) { return argon2_core(context, Argon2_i); }
+int argon2i(argon2_context *context) {
+    return argon2_core(context, Argon2_i);
+}
 
 int verify_d(argon2_context *context, const char *hash) {
     int result;
